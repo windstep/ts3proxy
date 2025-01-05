@@ -9,24 +9,14 @@ from .weblist import Weblist
 from .statistics import Statistics
 
 
-def main():
-    with open("config.yml", 'r') as stream:
+def main(cfg_path):
+    with open(cfg_path, 'r') as stream:
         try:
             config = yaml.safe_load(stream)
         except yaml.YAMLError as exc:
             print(exc, file=sys.stderr)
             sys.exit(1)
-    numeric_level = getattr(logging, config['system']['logLevel'].upper(), None)
-    if numeric_level is None:
-        raise ValueError('Invalid log level: %s' % config['system']['logLevel'])
-    logging.basicConfig(
-        level=numeric_level,
-        format='[%(asctime)s] %(message)s',
-        handlers=[
-            logging.FileHandler(config['system']['logfile']),
-            logging.StreamHandler()
-        ]
-    )
+
     statistics = Statistics(
         config['system']['maxUsers']
     )
@@ -72,16 +62,4 @@ def main():
             weblist_server
         ))
 
-    try:
-        # now all services are started
-        # wait for threads to stop or for keyboard interrupt
-        for service in services:
-            service.thread.join()
-    except KeyboardInterrupt:
-        logging.info('received KeyboardInterrupt, stopping threads')
-        for service in services:
-            service.stop_thread()
-        logging.info('closed sockets, waiting for threads to stop')
-        for service in services:
-            service.thread.join()
-        logging.info('threads stopped')
+    return services

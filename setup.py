@@ -11,8 +11,8 @@ install_requires = [
 
 setup(
     name="ts3proxy",
-    version='0.3',
-    author="Karl-Martin Minkner",
+    version='0.4',
+    author="Karl-Martin Minkner and Sergey Popov",
     author_email="support@kandru.de",
     packages=find_packages(),
     include_package_data=True,
